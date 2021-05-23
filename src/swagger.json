@@ -1,0 +1,147 @@
+{
+    "openapi":"3.0.0",
+    "info": {
+        "title": "Atlas",
+        "description": "Está é uma documentação sobre a Atlas API",
+        "version": "1.0.0",
+        "contact": {
+            "email":"duferrari01@gmail.com"
+        }
+    },
+    "tags": [{
+        "name":"User",
+        "description":"Gerenciamento de usuários"
+    }],
+    "paths":{
+        "description":"Gerenciamento de usuários",
+        "/users": {            
+            "post":{
+                "tags":["User"],
+                "summary":"Cria um novo usuário",
+                "description":"Gerenciamento de usuários",
+                "requestBody":{
+                    "required": true,     
+                    "description":"Campos obrigatorios para criação de novo usuário",
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type":"object",
+                                "properties":{
+                                    "name":{
+                                        "type": "string"
+                                    },
+                                    "email":{
+                                        "type":"string"
+                                    }
+                                },
+                                "example":{
+                                    "name":"Eduardo",
+                                    "email": "duferrari01@gmail.com"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "201":{
+                        "description": "Operação realizada com Sucesso",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+
+                                },
+                                "example":{
+                                    "id":"d5fe511b-a39e-4680-b5d5-15fef565392c",
+                                    "name":"Juvenal",
+                                    "email":"juvenal@gmail.com",
+                                    "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
+                                    "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
+                                }   
+                            }
+                        }
+                        
+                        
+                    },
+                    "400":{
+                        "description": "Email já esta sendo utilizado",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+
+                                },
+                                "example":{
+                                    "id":"d5fe511b-a39e-4680-b5d5-15fef565392c",
+                                    "name":"Juvenal",
+                                    "email":"juvenal@gmail.com",
+                                    "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
+                                    "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
+                                }   
+                            }
+                        }
+                        
+                        
+                    }
+                }
+            },
+            "get":{
+                "tags":["Users"],
+                "summary":"Get List Users",
+                "description":"Get List all users",
+                "requestBody":{
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type":"object",
+                                "properties":{
+                                    "user_id":{
+                                        "type": "string"
+                                    }
+                                },
+                                "example":{
+                                    "user_id":"d5fe511b-a39e-4680-b5d5-15fef562620c"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "200":{                            
+                        "id":"d5fe511b-a39e-4680-b5d5-15fef565392c",
+                        "name":"Juvenal",
+                        "email":"juvenal@gmail.com",
+                        "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
+                        "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
+                    },
+                    "400":{
+                        "description":"User not found"
+                        }
+                    
+                }
+            }
+        },
+        "/users/{user_id}/admin":{
+            "patch":{
+                "tags":["Users"],
+                "summary":"Turn User Administrator",
+                "description":"Turn already administrator",
+                "parameters":{
+                    "in":"path",
+                    "name": "user_id",
+                    "required":true,
+                    "schema":{
+                        "type": "string"                       
+                    }
+                },
+                "responses":{
+                    "201":{
+                        
+                    },
+                    "500":{
+                        "description":"User already exists"
+                    }
+                }
+            }
+        }
+    }
+
+}

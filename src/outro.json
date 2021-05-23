@@ -1,0 +1,49 @@
+{
+    "openapi":"3.0.0",
+    "info": {
+        "title": "teste",
+        "description": "AAA",
+        "version": "1.0.0",
+        "contact": {
+            "email":"eduardo@eduardo.com.br"
+        }
+    },
+    "paths":{
+        "/users": {
+            "post":{
+                "summary":"Create a category",
+                "description":"AAA",
+                "resquestBody":{
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type":"object",
+                                "properties":{
+                                    "name":{
+                                        "type": "string"
+                                    },
+                                    "description":{
+                                        "type":"string"
+                                    }
+                                },
+                                "example":{
+                                    "name":"AAA",
+                                    "description": "AAA"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "201":{
+                        "description":"Created"
+                    },
+                    "500":{
+                        "description":"Category error"
+                    }
+                }
+            }
+        }
+    }
+
+}

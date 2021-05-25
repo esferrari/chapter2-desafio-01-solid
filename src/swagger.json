@@ -9,14 +9,14 @@
         }
     },
     "tags": [{
-        "name":"User",
+        "name":"Users",
         "description":"Gerenciamento de usuários"
     }],
     "paths":{
         "description":"Gerenciamento de usuários",
         "/users": {            
             "post":{
-                "tags":["User"],
+                "tags":["Users"],
                 "summary":"Cria um novo usuário",
                 "description":"Gerenciamento de usuários",
                 "requestBody":{
@@ -48,9 +48,11 @@
                         "content":{
                             "application/json":{
                                 "schema":{
+                                    "$ref":"#/definitions/UsersPost"
 
                                 },
                                 "example":{
+                                    "admin":false,
                                     "id":"d5fe511b-a39e-4680-b5d5-15fef565392c",
                                     "name":"Juvenal",
                                     "email":"juvenal@gmail.com",
@@ -67,14 +69,13 @@
                         "content":{
                             "application/json":{
                                 "schema":{
+                                    "$ref":"#/definitions/UsersError"
+
+
 
                                 },
                                 "example":{
-                                    "id":"d5fe511b-a39e-4680-b5d5-15fef565392c",
-                                    "name":"Juvenal",
-                                    "email":"juvenal@gmail.com",
-                                    "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
-                                    "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
+                                    "error":"This email is already in use."
                                 }   
                             }
                         }
@@ -85,63 +86,220 @@
             },
             "get":{
                 "tags":["Users"],
-                "summary":"Get List Users",
-                "description":"Get List all users",
-                "requestBody":{
-                    "content":{
-                        "application/json":{
-                            "schema":{
-                                "type":"object",
-                                "properties":{
-                                    "user_id":{
-                                        "type": "string"
-                                    }
+                "summary":"Retorna todos os usuários.",
+                "description":"Somente usuário `admin` pode acessar",
+                "parameters":[
+                        {
+                        "name":"user_id",
+                        "in":"header",
+                        "required":true,
+                        "type":"string",
+                        "format":"uuid"
+                    }
+                ],
+                "responses":{
+                    "201":{
+                        "description": "Operação realizada com Sucesso",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/definitions/UsersPost"
+
+                                },
+                                "example":[{
+                                    "admin":true,
+                                    "id":"d5fe511b-a39e-4680-b5d5-15fef584392c",
+                                    "name":"Eduardo",
+                                    "email":"eduardo@gmail.com",
+                                    "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
+                                    "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
+                                },
+                                {
+                                    "admin":false,
+                                    "id":"d5fe511b-a39e-4680-b5d5-15fef565392c",
+                                    "name":"Juvenal",
+                                    "email":"juvenal@gmail.com",
+                                    "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
+                                    "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
+                                }
+                             ]  
+                            }
+                        }
+                        
+                        
+                    },
+                    "400":{
+                        "description": "Usuário sem permissão ou Usuário não encontrado",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/definitions/UsersError"
                                 },
                                 "example":{
-                                    "user_id":"d5fe511b-a39e-4680-b5d5-15fef562620c"
-                                }
+                                    "error":"You need to be an administrator to list all Users."
+                                }   
                             }
                         }
                     }
-                },
+                }
+            }
+        },
+        "/users/{user_id}":{
+            "get":{
+                "tags":["Users"],
+                "summary":"Retorna um usuário especifico",
+                "parameters":[
+                    {
+                    "name":"user_id",
+                    "in":"path",
+                    "description":"ID do Usuário",
+                    "required":true,
+                    "type":"string"
+                    }
+                ],
                 "responses":{
-                    "200":{                            
-                        "id":"d5fe511b-a39e-4680-b5d5-15fef565392c",
-                        "name":"Juvenal",
-                        "email":"juvenal@gmail.com",
-                        "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
-                        "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
-                    },
-                    "400":{
-                        "description":"User not found"
+                    "200":{
+                        "description": "Operação realizada com Sucesso",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/definitions/UsersPost"
+
+                                },
+                                "example":{
+                                    "admin":false,
+                                    "id":"d5fe511b-a39e-4680-b5d5-15fef584392c",
+                                    "name":"Eduardo",
+                                    "email":"eduardo@gmail.com",
+                                    "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
+                                    "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
+                                }  
+                            }
                         }
-                    
+                    },
+                    "404":{
+                        "description": "Usuário não encontrado",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/definitions/UsersError"
+                                },
+                                "example":{
+                                    "error":"User not found"
+                                }   
+                            }
+                        }
+                    }
                 }
             }
         },
         "/users/{user_id}/admin":{
             "patch":{
                 "tags":["Users"],
-                "summary":"Turn User Administrator",
-                "description":"Turn already administrator",
-                "parameters":{
+                "summary":"Torna admin um usuário",
+                "parameters":[
+                    {
+                    "name":"user_id",
                     "in":"path",
-                    "name": "user_id",
                     "required":true,
-                    "schema":{
-                        "type": "string"                       
+                    "type":"string"
                     }
-                },
+                ],
                 "responses":{
-                    "201":{
-                        
+                    "200":{
+                        "description": "Operação realizada com Sucesso",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/definitions/UsersPost"
+
+                                },
+                                "example":{
+                                    "admin":false,
+                                    "id":"d5fe511b-a39e-4680-b5d5-15fef584392c",
+                                    "name":"Eduardo",
+                                    "email":"eduardo@gmail.com",
+                                    "created_at":"Sat May 21 2021 20:08:04 GMT-0300",
+                                    "updated_at":"Sat May 22 2021 20:08:04 GMT-0300"
+                                }  
+                            }
+                        }
                     },
-                    "500":{
-                        "description":"User already exists"
+                    "404":{
+                        "description": "Usuário não encontrado",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/definitions/UsersError"
+                                },
+                                "example":{
+                                    "error":"User not found"
+                                }   
+                            }
+                        }
                     }
                 }
             }
         }
+    },
+    "definitions":{
+        "UsersPost":{
+            "type":"object",
+            "properties":{
+                "admin":{
+                    "type":"boolean",
+                    "enum":[false]                        
+                },
+                "id":{
+                    "type":"string"
+                },
+                "name":{
+                    "type":"string"   
+                },
+                "email":{
+                    "type":"string"
+                },
+                "created_at":{
+                    "type":"string"   
+                },
+                "updated_at":{
+                    "type":"string"
+                }
+            }
+        },
+        "UsersError":{
+            "type":"object",
+            "properties":{
+                "error":{
+                    "type":"string"
+                }
+            }
+        },
+        "UsersGet":{
+            "type":"object",
+            "properties":{
+                "admin":{
+                    "type":"boolean",
+                    "enum":[false]                        
+                },
+                "id":{
+                    "type":"string"
+                },
+                "name":{
+                    "type":"string"   
+                },
+                "email":{
+                    "type":"string"
+                },
+                "created_at":{
+                    "type":"string"   
+                },
+                "updated_at":{
+                    "type":"string"
+                }
+            }
+        }
+
     }
 
 }
